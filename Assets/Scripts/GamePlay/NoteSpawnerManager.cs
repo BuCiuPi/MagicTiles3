@@ -17,26 +17,32 @@ public class NoteSpawnerManager : MonoBehaviour
     [Space]
     [SerializeField] private RectTransform _resetNoteRectTransform;
 
-    void Start()
+    [Header("Event Listener")]
+    [SerializeField] private VoidEventChannel _onNoteSpawnEvent;
+
+    private float _currentAccuracyPositionY;
+
+    void OnEnable()
     {
+        _onNoteSpawnEvent.OnEventRaised += SpawnNoteAtRandomLine;
+    }
+
+    void OnDisable()
+    {
+        _onNoteSpawnEvent.OnEventRaised -= SpawnNoteAtRandomLine;
+    }
+
+    public void Initialize(float accuracyPositionY)
+    {
+        _currentAccuracyPositionY = accuracyPositionY;
         SetupPool();
-        Initialize();
     }
 
-    public void Initialize()
+    private void SpawnNoteAtRandomLine()
     {
-        StartCoroutine(CoSpawnNote());
-    }
-
-    IEnumerator CoSpawnNote()
-    {
-
-        yield return new WaitForSeconds(.5f);
         int randomIndex = UnityEngine.Random.Range(0, _linePositions.Count - 1);
         RectTransform randomLineTransform = _linePositions[randomIndex];
         CreatedNoteAt(randomLineTransform);
-
-        StartCoroutine(CoSpawnNote());
     }
 
     public void SetupPool()
@@ -61,7 +67,8 @@ public class NoteSpawnerManager : MonoBehaviour
         NoteInfo noteInfo = new();
         noteInfo.NoteData = _noteData;
         noteInfo.NoteSpeed = _levelInfoSO.LevelNoteSpeed;
-        noteInfo.NoteResetPositionZ = +_resetNoteRectTransform.position.y;
+        noteInfo.NoteResetPositionY = _resetNoteRectTransform.position.y;
+        noteInfo.NoteAccuracyPositionY = _currentAccuracyPositionY;
 
         newNote.Initialize(noteInfo, OnPoolItemResetCallback);
         newNote.transform.SetParent(linePosition);
@@ -92,5 +99,10 @@ public class NoteSpawnerManager : MonoBehaviour
         NoteController newNote = Instantiate(_notePrefab, _poolTransform);
         newNote.gameObject.SetActive(false);
         return newNote;
+    }
+
+    public Vector3 GetSpawnPosition()
+    {
+        return _linePositions[0].position;
     }
 }

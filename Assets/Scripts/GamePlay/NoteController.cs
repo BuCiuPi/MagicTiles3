@@ -20,6 +20,7 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     private float _lastClickTime;
     private bool _isClicked;
+    private bool _isMissed;
 
     private Action<NoteController> _resetCallback;
 
@@ -48,7 +49,17 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
         _rectTransform.position += Vector3.up * (_currentNoteInfo.NoteSpeed * Time.deltaTime);
 
-        if (_rectTransform.position.y < _currentNoteInfo.NoteResetPositionZ)
+        if (_currentNoteInfo.NoteAccuracyPositionY > _noteTop.position.y && !_isMissed && !_isClicked)
+        {
+            NoteInteractInfo noteInteractInfo = new();
+            noteInteractInfo.NoteController = this;
+            noteInteractInfo.NoteHoverTime = Time.time - _lastClickTime;
+
+            _OnNoteInteractEvent.RaiseEvent(noteInteractInfo);
+            _isMissed = true;
+        }
+
+        if (_rectTransform.position.y < _currentNoteInfo.NoteResetPositionY)
         {
             OnNoteTouchResetPosition();
         }
@@ -56,7 +67,7 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (_isClicked)
+        if (_isClicked || _isMissed)
         {
             return;
         }
@@ -132,7 +143,8 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 public class NoteInfo
 {
     public NoteDataSO NoteData;
-    public float NoteResetPositionZ;
+    public float NoteResetPositionY;
+    public float NoteAccuracyPositionY;
     public float NoteSpeed;
 }
 

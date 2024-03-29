@@ -12,5 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1117179724a27d44ad9cbad11899326, type: 3}
   m_Name: BaseLevelInfoSO
   m_EditorClassIdentifier: 
-  LevelNoteSpeed: -4.5
-  LevelAudioClip: {fileID: 0}
+  LevelNoteSpeed: -3.5
+  LevelAudioClip: {fileID: 8300000, guid: 0531fc8826fe32e4eab17fbd93164b18, type: 3}
+  LevelAudioBPM: 157
+  OffsetBeat: 4
+  OffsetTime: 0.293
+  NotePerBeat: 0.5
+  MaxScore: 100
+  _badScore: 1
+  _goodScore: 2
+  _perfectScore: 3
