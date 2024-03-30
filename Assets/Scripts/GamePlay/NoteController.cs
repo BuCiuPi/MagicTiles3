@@ -10,6 +10,9 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     [SerializeField] private RectTransform _noteTop;
     [SerializeField] private RectTransform _noteBot;
 
+    [SerializeField] private Animator _animator;
+    [SerializeField] private ParticleSystem _particleSystem;
+
     [Header("Event Raiser")]
     [SerializeField] private NoteInteractEventChannel _OnNoteInteractEvent;
 
@@ -72,6 +75,8 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             return;
         }
 
+        _animator.SetTrigger("PressDown");        
+
         _isClicked = true;
         _lastClickTime = Time.time;
     }
@@ -82,6 +87,9 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         {
             return;
         }
+
+        _animator.SetTrigger("Release");
+        _particleSystem.Play();      
 
         NoteInteractInfo noteInteractInfo = new();
         noteInteractInfo.NoteController = this;

@@ -9,19 +9,24 @@ public class UIGamePlay : MonoBehaviour
 {
     [SerializeField] private Image _barScore;
     [SerializeField] private TextMeshProUGUI _txtScore;
+    [SerializeField] private Animator _animScore;
     [SerializeField] private TextMeshProUGUI _txtCombo;
+    [SerializeField] private Animator _animCombo;
 
     [Space]
     [SerializeField] private GameObject _txtBad;
     [SerializeField] private ParticleSystem _psBad;
+    [SerializeField] private Animator _animBad;
 
     [Space]
     [SerializeField] private GameObject _txtGood;
     [SerializeField] private ParticleSystem _psGood;
+    [SerializeField] private Animator _animGood;
 
     [Space]
     [SerializeField] private GameObject _txtPerfect;
     [SerializeField] private ParticleSystem _psPerfect;
+    [SerializeField] private Animator _animPerfect;
 
     [Header("Event Listener")]
     [SerializeField] private NoteAccuracyEventChannel _onNoteAccuracyEvent;
@@ -49,6 +54,7 @@ public class UIGamePlay : MonoBehaviour
     {
         _txtScore.gameObject.SetActive(true);
         _txtScore.text = Value.ToString();
+        _animScore.SetTrigger("Pop");
     }
 
     private void OnSetComboEventReceived(int value)
@@ -56,11 +62,12 @@ public class UIGamePlay : MonoBehaviour
         if (value <= 0)
         {
             _txtCombo.gameObject.SetActive(false);
-            return;    
+            return;
         }
 
         _txtCombo.text = value + "x";
         _txtCombo.gameObject.SetActive(true);
+        _animCombo.SetTrigger("Pop");
     }
 
     private void OnSetScorePercentReceived(float value)
@@ -79,24 +86,25 @@ public class UIGamePlay : MonoBehaviour
             case NoteAccuracy.Miss:
                 break;
             case NoteAccuracy.Bad:
-                _badCoroutine = StartCoroutine(CoPlayAccuracyAnimation(_txtBad, _psBad, 1));
+                _badCoroutine = StartCoroutine(CoPlayAccuracyAnimation(_txtBad, _psBad,_animBad, 1));
 
                 break;
             case NoteAccuracy.Good:
-                _goodCoroutine = StartCoroutine(CoPlayAccuracyAnimation(_txtGood, _psGood, 1));
+                _goodCoroutine = StartCoroutine(CoPlayAccuracyAnimation(_txtGood, _psGood,_animGood, 1));
 
                 break;
             case NoteAccuracy.Perfect:
-                _perfectCoroutine = StartCoroutine(CoPlayAccuracyAnimation(_txtPerfect, _psPerfect, 1));
+                _perfectCoroutine = StartCoroutine(CoPlayAccuracyAnimation(_txtPerfect, _psPerfect,_animPerfect, 1));
 
                 break;
         }
     }
 
-    IEnumerator CoPlayAccuracyAnimation(GameObject textObject, ParticleSystem particle, float DelayOffTime)
+    IEnumerator CoPlayAccuracyAnimation(GameObject textObject, ParticleSystem particle, Animator animator, float DelayOffTime)
     {
         textObject.SetActive(true);
         particle.Play();
+        animator.SetTrigger("Pop");
         yield return new WaitForSeconds(DelayOffTime);
         particle.Stop();
         textObject.SetActive(false);
