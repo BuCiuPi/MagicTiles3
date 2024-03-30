@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
@@ -15,8 +16,12 @@ public class LevelManager : MonoBehaviour
     [Header("Event Raiser")]
     [SerializeField] private VoidEventChannel _onNoteSpawnEvent;
     [SerializeField] private NoteAccuracyEventChannel _onNoteAccuracyEvent;
-    [SerializeField] private FloatEventChannel _onNoteScoreEvent;
+    [SerializeField] private FloatEventChannel _onNoteScorePercentEvent;
+    [SerializeField] private IntEventChannel _onNoteScoreEvent;
     [SerializeField] private IntEventChannel _onNoteComboEvent;
+
+    [Space]
+    [SerializeField] private VoidEventChannel _onUIResultInspectEvent;
 
     private float _spawnOffset;
     private float _songDuration;
@@ -27,7 +32,7 @@ public class LevelManager : MonoBehaviour
     private bool _isStartSpawnNote;
     private float _validSpawnTime;
 
-    private float _currentLevelScore;
+    private int _currentLevelScore;
     private int _currentCombo;
     private float _currentPlayOffset;
 
@@ -42,8 +47,10 @@ public class LevelManager : MonoBehaviour
         _onNoteInteractEventChannel.OnEventRaised -= OnNoteInteractEventChannel;
     }
 
-    public void Initialize(Vector3 SpawnPosition)
+    public void Initialize(Vector3 SpawnPosition, LevelInfoSO levelInfoSO)
     {
+        _levelInfoSO = levelInfoSO;
+
         _songDuration = _levelInfoSO.LevelAudioClip.length;
 
         float distanceY = Mathf.Abs(SpawnPosition.y - _accuracyLine.position.y);
@@ -82,6 +89,13 @@ public class LevelManager : MonoBehaviour
     void FixedUpdate()
     {
         UpdateSpawnTime();
+
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            OnEndLevel();
+        }
+#endif
     }
 
     private void UpdateSpawnTime()
@@ -95,7 +109,27 @@ public class LevelManager : MonoBehaviour
                 _onNoteSpawnEvent.RaiseEvent();
                 _validSpawnTime += (_spawnTimeOffsetPerBeat / _levelInfoSO.NotePerBeat);
             }
+
+            if (_songDuration < _validSpawnTime - _spawnOffset + _currentPlayOffset)
+            {
+                
+
+                OnEndLevel();
+            }
         }
+    }
+
+    private void OnEndLevel()
+    {
+        _isStartSpawnNote = false;
+        StartCoroutine(CoOnEndLevel());
+    }
+
+    IEnumerator CoOnEndLevel()
+    {
+        yield return new WaitForSeconds(_spawnOffset + _currentPlayOffset + _levelInfoSO.EndLevelDelayTime);
+        _audioSource.Stop();
+        _onUIResultInspectEvent.RaiseEvent();
     }
 
     private void OnNoteInteractEventChannel(NoteInteractInfo info)
@@ -103,11 +137,12 @@ public class LevelManager : MonoBehaviour
         NoteAccuracy currentNoteAccuracy = info.NoteController.GetNoteAccuracy(_accuracyLine.position);
         if (currentNoteAccuracy != NoteAccuracy.Miss)
         {
-            float additionalScore = _levelInfoSO.GetScoreByAccuracy(currentNoteAccuracy);
+            int additionalScore = _levelInfoSO.GetScoreByAccuracy(currentNoteAccuracy);
             _currentLevelScore += additionalScore;
 
             float scorePercent = Mathf.Clamp01(_currentLevelScore / _levelInfoSO.MaxScore);
-            _onNoteScoreEvent.RaiseEvent(scorePercent);
+            _onNoteScorePercentEvent.RaiseEvent(scorePercent);
+            _onNoteScoreEvent.RaiseEvent(_currentLevelScore);
 
             _currentCombo++;
         }

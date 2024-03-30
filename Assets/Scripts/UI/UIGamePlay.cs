@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class UIGamePlay : MonoBehaviour
 {
     [SerializeField] private Image _barScore;
+    [SerializeField] private TextMeshProUGUI _txtScore;
     [SerializeField] private TextMeshProUGUI _txtCombo;
 
     [Space]
@@ -25,6 +26,7 @@ public class UIGamePlay : MonoBehaviour
     [Header("Event Listener")]
     [SerializeField] private NoteAccuracyEventChannel _onNoteAccuracyEvent;
     [SerializeField] private FloatEventChannel _onSetScorePercentEvent;
+    [SerializeField] private IntEventChannel _onSetScoreEvent;
     [SerializeField] private IntEventChannel _onSetComboEvent;
 
     void OnEnable()
@@ -32,6 +34,7 @@ public class UIGamePlay : MonoBehaviour
         _onNoteAccuracyEvent.OnEventRaised += OnNoteAccuracyEventReceived;
         _onSetScorePercentEvent.OnEventRaised += OnSetScorePercentReceived;
         _onSetComboEvent.OnEventRaised += OnSetComboEventReceived;
+        _onSetScoreEvent.OnEventRaised += OnSetScoreEventReceived;
     }
 
     void OnDisable()
@@ -39,6 +42,13 @@ public class UIGamePlay : MonoBehaviour
         _onNoteAccuracyEvent.OnEventRaised -= OnNoteAccuracyEventReceived;
         _onSetScorePercentEvent.OnEventRaised -= OnSetScorePercentReceived;
         _onSetComboEvent.OnEventRaised -= OnSetComboEventReceived;
+        _onSetScoreEvent.OnEventRaised -= OnSetScoreEventReceived;
+    }
+
+    private void OnSetScoreEventReceived(int Value)
+    {
+        _txtScore.gameObject.SetActive(true);
+        _txtScore.text = Value.ToString();
     }
 
     private void OnSetComboEventReceived(int value)

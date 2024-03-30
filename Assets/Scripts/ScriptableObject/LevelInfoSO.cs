@@ -12,11 +12,14 @@ public class LevelInfoSO : ScriptableObject
     public float NotePerBeat;
     public float MaxScore;
 
-    [SerializeField] private float _badScore;
-    [SerializeField] private float _goodScore;
-    [SerializeField] private float _perfectScore;
 
-    public float GetScoreByAccuracy(NoteAccuracy noteAccuracy)
+    public float EndLevelDelayTime;
+
+    [SerializeField] private int _badScore;
+    [SerializeField] private int _goodScore;
+    [SerializeField] private int _perfectScore;
+
+    public int GetScoreByAccuracy(NoteAccuracy noteAccuracy)
     {
         switch (noteAccuracy)
         {

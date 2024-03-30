@@ -459,8 +459,10 @@ MonoBehaviour:
   _onNoteInteractEventChannel: {fileID: 11400000, guid: f1506689b2bd4d8408140ce7c9fd5407, type: 2}
   _onNoteSpawnEvent: {fileID: 11400000, guid: e3bf93aabc3bbc34eb6a3e1dea4788d6, type: 2}
   _onNoteAccuracyEvent: {fileID: 11400000, guid: cf2f9a254678b2f48b1a06ef4100d3cd, type: 2}
-  _onNoteScoreEvent: {fileID: 11400000, guid: dd7bd618cb368fc49b1215aabff5d94a, type: 2}
+  _onNoteScorePercentEvent: {fileID: 11400000, guid: dd7bd618cb368fc49b1215aabff5d94a, type: 2}
+  _onNoteScoreEvent: {fileID: 11400000, guid: b1b361de4413176478f15f8c7912f7b6, type: 2}
   _onNoteComboEvent: {fileID: 11400000, guid: 7fe9c36e24166b548a3fa17eb6fba59c, type: 2}
+  _onUIResultInspectEvent: {fileID: 11400000, guid: 8748dbd2feb6ae14d99d1ed38f39973f, type: 2}
 --- !u!1 &2871237698159980142
 GameObject:
   m_ObjectHideFlags: 0

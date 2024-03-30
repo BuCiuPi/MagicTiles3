@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private LevelInfoSO _levelInfoSO;
     [SerializeField] private LevelManager _levelManager;
     [SerializeField] private NoteSpawnerManager _noteSpawnerManager;
 
@@ -15,7 +16,7 @@ public class GameManager : MonoBehaviour
     public void Initialize()
     {
         _noteSpawnerManager.Initialize(_levelManager.GetAccuracyPositionY());
-        _levelManager.Initialize(_noteSpawnerManager.GetSpawnPosition());
+        _levelManager.Initialize(_noteSpawnerManager.GetSpawnPosition(), _levelInfoSO);
     }
 
 }

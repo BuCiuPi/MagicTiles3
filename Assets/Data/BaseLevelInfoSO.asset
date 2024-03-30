@@ -19,6 +19,7 @@ MonoBehaviour:
   OffsetTime: 0.293
   NotePerBeat: 0.5
   MaxScore: 100
+  EndLevelDelayTime: 1
   _badScore: 1
   _goodScore: 2
   _perfectScore: 3
