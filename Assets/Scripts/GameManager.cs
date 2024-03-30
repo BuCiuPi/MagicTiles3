@@ -8,6 +8,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private LevelManager _levelManager;
     [SerializeField] private NoteSpawnerManager _noteSpawnerManager;
 
+    [Header("EventRaiser")]
+    [SerializeField] private LevelInfoEventChannel _onLevelSetupEvent;
+
     void Start()
     {
         Initialize();
@@ -17,6 +20,8 @@ public class GameManager : MonoBehaviour
     {
         _noteSpawnerManager.Initialize(_levelManager.GetAccuracyPositionY());
         _levelManager.Initialize(_noteSpawnerManager.GetSpawnPosition(), _levelInfoSO);
+
+        _onLevelSetupEvent.RaiseEvent(_levelInfoSO);
     }
 
 }
