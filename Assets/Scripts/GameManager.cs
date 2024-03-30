@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,12 +12,18 @@ public class GameManager : MonoBehaviour
 
     [Header("EventRaiser")]
     [SerializeField] private LevelInfoEventChannel _onLevelSetupEvent;
+    [SerializeField] private VoidEventChannel _onGameStartEvent;
 
-    void Start()
+    void OnEnable()
     {
-        Initialize();
+        _onGameStartEvent.OnEventRaised += Initialize;
     }
-    
+
+    void OnDisable()
+    {
+        _onGameStartEvent.OnEventRaised -= Initialize;
+    }
+
     public void Initialize()
     {
         _noteSpawnerManager.Initialize(_levelManager.GetAccuracyPositionY());
