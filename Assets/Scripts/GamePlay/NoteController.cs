@@ -24,6 +24,7 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private float _lastClickTime;
     private bool _isClicked;
     private bool _isMissed;
+    private bool _isPassed;
 
     private Action<NoteController> _resetCallback;
 
@@ -70,7 +71,7 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (_isClicked || _isMissed)
+        if (_isClicked || _isMissed || _isPassed)
         {
             return;
         }
@@ -83,12 +84,13 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (!_isClicked)
+        if (!_isClicked || _isMissed || _isPassed)
         {
             return;
         }
 
         _animator.SetTrigger("Release");
+        Debug.Log("UP");
         _particleSystem.Play();      
 
         NoteInteractInfo noteInteractInfo = new();
@@ -96,6 +98,7 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         noteInteractInfo.NoteHoverTime = Time.time - _lastClickTime;
 
         _OnNoteInteractEvent.RaiseEvent(noteInteractInfo);
+        _isPassed = true;
     }
 
     public NoteAccuracy GetNoteAccuracy(Vector3 position)
@@ -144,6 +147,8 @@ public class NoteController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private void Reset()
     {
         _isClicked = false;
+        _isMissed = false;
+        _isPassed = false;
     }
 
 }
